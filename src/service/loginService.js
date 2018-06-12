@@ -1,17 +1,26 @@
-class LoginService {
-  login($username, $password) {
-    let remoteData = {
-      success: true,
-      token: 'user token',
-      userInfo: {
-        username: $username,
-        password: $password,
-      },
-    };
+// import axios from 'axios';
 
-    if (remoteData.success) {
-      return true;
+class LoginService {
+  login(_username, _password) {
+    let result = null;
+
+    // axios.post('http://localhost:8080/login', {
+    //   username: _username,
+    //   password: _password,
+    // }).then((response) => {
+    //   if (response.code === 0) {
+    //     result = response.data;
+    //   }
+    // }).catch((error) => {
+    //   console.log(error);
+    // });
+
+    if (_username === 'admin' && _password === 'password') {
+      result = {
+        username: _username,
+      };
     }
+    return result;
   }
 }
 

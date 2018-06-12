@@ -19,6 +19,8 @@
   </div>
 </template>
 <script>
+import loginService from '@/service/loginService';
+
 export default {
   data() {
     return {
@@ -48,7 +50,14 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          console.log(this.loginForm.username);
+          console.log(this.loginForm.password);
+          const loginResult = loginService.login(this.loginForm.username, this.loginForm.password);
+          if (loginResult != null) {
+            alert('login success');
+          } else {
+            alert('login failed!');
+          }
         }
       });
     },
