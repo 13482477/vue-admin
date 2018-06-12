@@ -50,5 +50,6 @@ module.exports = {
     'max-len': [0, 200, 4],
     'no-console': 'off',
     'class-methods-use-this': 'off',
+    'linebreak-style': ["off", "windows"],
   }
 }

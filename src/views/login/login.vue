@@ -19,7 +19,7 @@
   </div>
 </template>
 <script>
-import loginService from '@/service/loginService';
+import loginService from '../../../static/service/loginService';
 
 export default {
   data() {
