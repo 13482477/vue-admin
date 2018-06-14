@@ -2,15 +2,15 @@
   <div class="login-container">
     <div class="login-form-container">
       <el-form :model="loginForm" ref="loginForm" :rules="rules" label-width="100px" size="mini" class="demo-ruleForm">
-        <el-form-item prop="username">
+        <el-form-item prop="username" label-width="0px">
           <label>用户名</label>
           <el-input type="text" v-model="loginForm.username" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item prop="password">
+        <el-form-item prop="password" label-width="0px">
           <label>密码</label>
           <el-input type="password" v-model="loginForm.password" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item label-width="0px">
           <el-button type="primary" v-on:click="submitForm('loginForm')">提交</el-button>
           <el-button type="primary" plain v-on:click="resetForm('loginForm')">重置</el-button>
         </el-form-item>
@@ -19,7 +19,7 @@
   </div>
 </template>
 <script>
-import loginService from '../../../static/service/loginService';
+import loginService from '@/service/loginService';
 
 export default {
   data() {
@@ -50,13 +50,11 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.loginForm.username);
-          console.log(this.loginForm.password);
-          const loginResult = loginService.login(this.loginForm.username, this.loginForm.password);
+          const loginResult = loginService.login(this.$store, this.loginForm.username, this.loginForm.password);
           if (loginResult != null) {
-            alert('login success');
+            this.$router.push('/main');
           } else {
-            alert('login failed!');
+            alert('login failed');
           }
         }
       });
