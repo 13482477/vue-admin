@@ -63,6 +63,12 @@ export default {
       this.$refs[formName].resetFields();
     },
   },
+  mounted() {
+    console.log(this.$store.state);
+    if (this.$store.getters.currentSession != null) {
+      this.$router.push('/main');
+    }
+  },
 };
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>

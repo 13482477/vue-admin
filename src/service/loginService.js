@@ -6,7 +6,6 @@ export default {
         username: _username,
       };
       store.commit('login', 'new token', _username, _password);
-      console.log(store.state.session);
     }
     return result;
   },
