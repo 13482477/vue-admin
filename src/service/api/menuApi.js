@@ -1,26 +1,12 @@
-<template>
-  <div class="menu-container">
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
-      <my_node v-for="value in menus" v-bind:key="value" :model="value"></my_node>
-    </el-menu>
-  </div>
-</template>
-
-<script>
-import menuNode from './menu_node';
-
 export default {
-  name: 'nav_menu',
-  components: {
-    my_node: menuNode,
-  },
-  data() {
+  getMenuData() {
     return {
-      menus: [
+      id: 0,
+      name: 'root',
+      children: [
         {
           id: 1,
           name: '首页预览',
-          hasChildren: true,
           children: [
             {
               id: 11,
@@ -56,33 +42,15 @@ export default {
         }, {
           id: 2,
           name: '视频管理',
-          hasChildren: false,
         }, {
           id: 3,
           name: '图集管理',
-          hasChildren: false,
         },
         {
           id: 4,
           name: '图文管理',
-          hasChildren: false,
         },
       ],
     };
   },
-  methods: {
-    handleOpen() {
-      console.log('menu opened');
-    },
-    handleClose() {
-      console.log(('menu closed'));
-    },
-  },
 };
-</script>
-
-<style scoped>
-.menu-container {
-  padding-left: 10px;
-}
-</style>

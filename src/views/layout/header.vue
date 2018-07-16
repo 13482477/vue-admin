@@ -2,7 +2,7 @@
   <div class="header-container">
     <div class="header-left">
       <label>
-        vue-admin
+        寻趣乡村管理后台
       </label>
     </div>
     <div class="header-right">
