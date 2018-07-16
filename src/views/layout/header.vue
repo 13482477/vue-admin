@@ -2,7 +2,7 @@
   <div class="header-container">
     <div class="header-left">
       <label>
-        寻趣乡村管理后台
+        WEB TERMINAL
       </label>
     </div>
     <div class="header-right">

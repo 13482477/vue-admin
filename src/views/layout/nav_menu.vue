@@ -1,88 +1,35 @@
 <template>
   <div class="menu-container">
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
-      <my_node v-for="value in menus" v-bind:key="value" :model="value"></my_node>
+    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen">
+      <tree-node v-for="(value, index) in menus" :key="index" :inputData="value"></tree-node>
     </el-menu>
   </div>
 </template>
 
 <script>
-import menuNode from './menu_node';
+import treeNode from './tree_node';
+import menuService from '../../service/api/menuApi';
 
 export default {
   name: 'nav_menu',
   components: {
-    my_node: menuNode,
+    treeNode,
   },
   data() {
     return {
-      menus: [
-        {
-          id: 1,
-          name: '首页预览',
-          hasChildren: true,
-          children: [
-            {
-              id: 11,
-              name: '首页头图配置',
-              url: '',
-            },
-            {
-              id: 12,
-              name: '轮播图',
-              url: '',
-            },
-            {
-              id: 13,
-              name: '标签设置',
-              url: '',
-            },
-            {
-              id: 14,
-              name: '首页视频',
-              url: '',
-            },
-            {
-              id: 15,
-              name: '首页图集',
-              url: '',
-            },
-            {
-              id: 14,
-              name: '首页图文',
-              url: '',
-            },
-          ],
-        }, {
-          id: 2,
-          name: '视频管理',
-          hasChildren: false,
-        }, {
-          id: 3,
-          name: '图集管理',
-          hasChildren: false,
-        },
-        {
-          id: 4,
-          name: '图文管理',
-          hasChildren: false,
-        },
-      ],
+      menus: menuService.getMenuData().children,
     };
   },
   methods: {
     handleOpen() {
       console.log('menu opened');
     },
-    handleClose() {
-      console.log(('menu closed'));
-    },
   },
 };
 </script>
 
 <style scoped>
-.menu-container {
-  padding-left: 10px;
+.menu-container .el-menu {
+  border-right: none;
 }
 </style>
