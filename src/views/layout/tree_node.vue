@@ -1,12 +1,12 @@
 <template>
-  <el-submenu v-if="hasChildren" :index="String(nodeData.id)">
+  <el-submenu v-if="hasChildren" :index="String(nodeData.url)">
     <template slot="title">
       <i :class="iconClass"></i>
       <span>{{nodeData.name}}</span>
     </template>
     <tree-node v-for="(value, index) in nodeData.children" :key="index" :inputData="value"></tree-node>
   </el-submenu>
-  <el-menu-item v-else :index="String(nodeData.id)">
+  <el-menu-item v-else :index="String(nodeData.url)">
     <i :class="iconClass"></i>
     <span slot="title">{{nodeData.name}}</span>
   </el-menu-item>

@@ -8,6 +8,7 @@ export default {
           id: 1,
           name: 'Proxy',
           icon: 'el-icon-star-on',
+          url: '/main/proxy',
         }, {
           id: 2,
           name: '主机',
@@ -17,6 +18,7 @@ export default {
               id: 21,
               name: '主机管理',
               icon: 'el-icon-view',
+              url: '/main/host',
             },
           ],
         },
