@@ -1,20 +1,25 @@
 <template>
   <div class="host">
     <div class="panel">
-      <el-table :data="data" style="width: 100%">
+      <el-table :data="endpointList" style="width: 100%">
         <el-table-column prop="hostName" label="机器列表"></el-table-column>
         <el-table-column prop="remoteAddress"></el-table-column>
         <el-table-column>
           <template slot-scope="scope">
-            <el-button size="mini" type="success" @click="handleLoginClick(scope.row)">登录</el-button>
+            <el-button v-if="isEndpointLogin(scope.row)" size="mini" type="success"
+                       @click="handleLoginClick(scope.row)">登录
+            </el-button>
+            <el-button v-else size="mini" type="danger">退出</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <div class="host-content">
-      内容
+      <div class="filePath">
+        <label style="font-size: 14px">当前路径：{{currentPath}}</label>
+      </div>
     </div>
-    <el-dialog title="登录" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog title="登录" :visible.sync="dialogForm.dialogVisible" width="30%" :before-close="handleClose">
       <el-form :model="dialogForm">
         <el-form-item label="用户名" :label-width="formLabelWidth">
           <el-input v-model="dialogForm.username" auto-complete="off"></el-input>
@@ -24,32 +29,39 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button @click="dialogForm.dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="login">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
+import axios from 'axios';
 import hostApi from '../../service/api/hostApi';
+import hostService from '../../service/hostService';
 
 export default {
   data() {
     return {
       dialogForm: {
         username: 'lizhiqiang',
-        password: '',
+        password: 'password',
+        dialogVisible: false,
       },
-      formLabelWidth: '50px',
-      selectedHost: null,
-      dialogVisible: false,
-      data: [],
+      formLabelWidth: '100px',
+      endpointList: [],
+      selectedEndpointIp: '',
+      currentPath: '',
+      subDirectory: [],
+      content: {},
     };
   },
   methods: {
     handleLoginClick(row) {
-      this.dialogVisible = true;
-      this.selectedAddress = row;
+      this.dialogForm.dialogVisible = true;
+      this.selectedEndpointIp = row.ip;
+      this.dialogForm.username = '';
+      this.dialogForm.password = '';
     },
     handleClose(done) {
       this.$confirm('确认关闭？')
@@ -58,6 +70,54 @@ export default {
         })
         .catch(() => {
         });
+    },
+    login() {
+      axios.post(
+        `http://192.168.68.158:8320/loginService/login/${this.selectedEndpointIp}`, {
+          username: this.dialogForm.username,
+          password: this.dialogForm.password,
+        }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+        }).then((resp) => {
+        const endpoint = hostService.getEndpointByIp(this.endpointList, this.selectedEndpointIp);
+        endpoint.username = this.dialogForm.username;
+        endpoint.token = resp.data.data;
+        this.dialogForm.dialogVisible = false;
+
+        axios.post(
+          `http://192.168.68.158:8320/fileService/currentDirectory/${this.selectedEndpointIp}`, {
+            token: endpoint.token,
+          }, {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+            },
+          },
+        ).then((resp2) => {
+          const endpoint2 = hostService.getEndpointByIp(this.endpointList, this.selectedEndpointIp);
+          endpoint2.currentPath = resp2.data.data;
+          this.currentPath = endpoint2.currentPath;
+        }).catch((err2) => {
+          console.log(err2);
+        });
+        this.dialogForm.dialogVisible = false;
+      }).catch((err) => {
+        console.log(err);
+      });
+    },
+    logout() {
+
+    },
+    isEndpointLogin(row) {
+      for (let i = 0; i < this.endpointList.length; i++) {
+        const endpoint = this.endpointList[i];
+        console.log(typeof (endpoint.token) !== 'undefined' && endpoint.token !== null && endpoint.token !== '');
+        if (endpoint.ip === row.ip) {
+          return typeof (endpoint.token) === 'undefined' || endpoint.token === null || endpoint.token !== '';
+        }
+      }
+      return false;
     },
   },
   mounted() {
@@ -69,7 +129,7 @@ export default {
           type: 'error',
         });
       }
-      this.data = resp.data.data;
+      this.endpointList = resp.data.data;
     }).catch((err) => {
       console.log(err);
       this.$notify({
@@ -88,7 +148,7 @@ export default {
 }
 
 .host .panel {
-  width: 400px;
+  width: 500px;
   min-height: 500px;
   border: solid 1px #a5c9f8;
   float: left;
@@ -98,6 +158,12 @@ export default {
 .host .host-content {
   height: 100%;
   border: solid 1px #a5c9f8;
-  margin-left: 410px;
+  margin-left: 510px;
+}
+
+.host .host-content .filePath {
+  border-bottom: solid 2px #a5c9f8;
+  padding-bottom: 8px;
+  margin: 10px;
 }
 </style>
