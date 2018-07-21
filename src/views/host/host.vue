@@ -106,9 +106,6 @@ export default {
         console.log(err);
       });
     },
-    logout() {
-
-    },
     isEndpointLogin(row) {
       for (let i = 0; i < this.endpointList.length; i++) {
         const endpoint = this.endpointList[i];
