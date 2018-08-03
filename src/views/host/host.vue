@@ -18,6 +18,19 @@
       <div class="filePath">
         <label style="font-size: 14px">当前路径：{{currentPath}}</label>
       </div>
+      <div class="scriptExec">
+        <div class="scriptExecHeader">
+          <label style="font-size: 14px">输入脚本：{{currentPath}}</label>
+          <div style="float: right; padding-bottom: 5px">
+            <el-button @click="execute">执行</el-button>
+          </div>
+        </div>
+        <el-input type="textarea" :rows="15" placeholder="请输入内容" v-model="script"></el-input>
+        <div class="scriptExecHeader">
+          <label style="font-size: 14px">执行结果：{{currentPath}}</label>
+        </div>
+        <el-input type="textarea" :rows="15" placeholder="请输入内容" v-model="executeResult"></el-input>
+      </div>
     </div>
     <el-dialog title="登录" :visible.sync="dialogForm.dialogVisible" width="30%" :before-close="handleClose">
       <el-form :model="dialogForm">
@@ -38,6 +51,7 @@
 <script>
 import axios from 'axios';
 import hostApi from '../../service/api/hostApi';
+import scriptApi from '../../service/api/scriptApi';
 import hostService from '../../service/hostService';
 
 export default {
@@ -54,6 +68,8 @@ export default {
       currentPath: '',
       subDirectory: [],
       content: {},
+      script: '',
+      executeResult: '',
     };
   },
   methods: {
@@ -73,7 +89,7 @@ export default {
     },
     login() {
       axios.post(
-        `http://192.168.68.158:8320/loginService/login/${this.selectedEndpointIp}`, {
+        `http://192.168.68.254:8320/loginService/login/${this.selectedEndpointIp}`, {
           username: this.dialogForm.username,
           password: this.dialogForm.password,
         }, {
@@ -87,7 +103,7 @@ export default {
         this.dialogForm.dialogVisible = false;
 
         axios.post(
-          `http://192.168.68.158:8320/fileService/currentDirectory/${this.selectedEndpointIp}`, {
+          `http://192.168.68.254:8320/fileService/currentDirectory/${this.selectedEndpointIp}`, {
             token: endpoint.token,
           }, {
             headers: {
@@ -115,6 +131,20 @@ export default {
         }
       }
       return false;
+    },
+    execute() {
+      scriptApi.execute(1, this.script, false).then((resp) => {
+        if (resp.data.code !== 200) {
+          this.$notify({
+            title: '主机数据获取失败',
+            message: '脚本执行失败',
+            type: 'error',
+          });
+        }
+        this.executeResult = resp.data.data.result;
+      }).catch((err) => {
+        console.log(err);
+      });
     },
   },
   mounted() {
@@ -162,5 +192,19 @@ export default {
   border-bottom: solid 2px #a5c9f8;
   padding-bottom: 8px;
   margin: 10px;
+}
+
+.host .host-content .scriptExec {
+  margin: 10px;
+}
+
+.host .host-content .scriptExecHeader {
+  padding: 10px;
+}
+
+.el-textarea textarea {
+  background-color: #333333;
+  color: #E8E8E8;
+  border-radius: 0px;
 }
 </style>
